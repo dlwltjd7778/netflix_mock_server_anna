@@ -18,10 +18,12 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/', ['IndexController', 'index']);
     $r->addRoute('GET', '/test', ['IndexController', 'test']);
     $r->addRoute('GET', '/test/{testNo}', ['IndexController', 'testDetail']);
-    $r->addRoute('POST', '/test', ['IndexController', 'testPost']);
+
+    $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
+
     $r->addRoute('GET', '/jwt', ['MainController', 'validateJwt']);
     $r->addRoute('POST', '/jwt', ['MainController', 'createJwt']);
-    
+
 
 
 //    $r->addRoute('GET', '/users', 'get_all_users_handler');

@@ -23,16 +23,38 @@ try {
             getLogs("./logs/errors.log");
             break;
         /*
-         * API No. 0
-         * API Name : 테스트 API
-         * 마지막 수정 날짜 : 19.04.29
+         * API No. 7
+         * API Name : 회원가입 API
+         * 마지막 수정 날짜 : 20.06.30
          */
-        case "test":
+        case "insertUser":
             http_response_code(200);
-            $res->result = test();
-            $res->isSuccess = TRUE;
-            $res->code = 100;
-            $res->message = "테스트 성공";
+
+            if($req->email==null || $req->pw==null){
+                $res->isSuccess = FALSE;
+                $res->code = 210;
+                $res->message = "null값 존재";
+            } else if(isExistEmail($req->email)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하는 이메일";
+            } else if(!isValidEmail($req->email)){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "잘못된 이메일 형식";
+            } else if(!isValidPw($req->pw)){
+                $res->isSuccess = FALSE;
+                $res->code = 240;
+                $res->message = "비밀번호는 4~60자리만 가능, 특수문자 불가능";
+
+            } else{
+                insertUser($req->email, $req->pw);
+
+                $res->userId = getUserIdbyEmail($req->email);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "회원가입 성공";
+            }
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
         /*
