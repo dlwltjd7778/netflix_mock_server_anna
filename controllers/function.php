@@ -22,7 +22,7 @@ function isValidHeader($jwt, $key)
     try {
         $data = getDataByJWToken($jwt, $key);
         //로그인 함수 직접 구현 요함
-        return isValidUser($data->id, $data->pw);
+        return isValidUser($data->email, $data->pw);
     } catch (\Exception $e) {
         return false;
     }
@@ -74,11 +74,12 @@ function getTodayByTimeStamp()
     return date("Y-m-d H:i:s");
 }
 
-function getJWToken($id, $pw, $secretKey)
+function getJWToken($email, $pw, $secretKey)
 {
     $data = array(
         'date' => (string)getTodayByTimeStamp(),
-        'id' => (string)$id,
+        'userIdx' => (string)getUserIdbyEmail($email),
+        'email' => (string)$email,
         'pw' => (string)$pw
     );
 
@@ -172,4 +173,27 @@ function getLogs($path)
     }
 //        fpassthru($fp);
     fclose($fp);
+}
+
+// 토큰에서 userId 값 가져오기
+function getUserIdxByToken(){
+
+    // jwt 유효성 검사
+
+    $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+
+    if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+        $res->isSuccess = FALSE;
+        $res->code = 200;
+        $res->message = "유효하지 않은 토큰입니다";
+        echo json_encode($res, JSON_NUMERIC_CHECK);
+        addErrorLogs($errorLogs, $res, $req);
+        return -1;
+    }
+
+    http_response_code(200);
+    $res->result = getDataByJWToken($jwt, JWT_SECRET_KEY);
+    $userIdx =  $res->result->userIdx;
+    return $userIdx;
+
 }
