@@ -40,7 +40,7 @@ function testDetail($testNo)
 function insertUser($email, $pw)
 {
     $pdo = pdoSqlConnect();
-    $query = "INSERT INTO user (email, pw) VALUES (?,?);";
+    $query = "INSERT INTO user (email, pw, isCanceled) VALUES (?,?,'Y');";
 
     $st = $pdo->prepare($query);
     $st->execute([$email, $pw]);
@@ -223,6 +223,55 @@ function isValidUser($email, $pw){
 
 }
 
+// 프로필 가져오기
+function getProfile($id){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT p.id as profileId, piu.profileImgUrl  from profile p
+                    inner join profileimgurl piu
+                        on p.profileImgId = piu.id
+                where p.userId=? and p.isDeleted='N';";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
+
+}
+
+// 프로필 추가 가능 여부
+function addProfileAvailable($id){
+    $pdo = pdoSqlConnect();
+    $query = "
+                select
+                (SELECT t.sameTimePeople FROM ticket t
+                inner join payment p
+                on p.ticketId = t.id
+                where p.userId=?)
+                >
+                (SELECT count(p.id) from profile p
+                    inner join profileimgurl piu
+                        on p.profileImgId = piu.id
+                where p.userId=? and p.isDeleted='N') as addProfileAvailable;
+                ";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$id,$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res[0][addProfileAvailable];
+
+}
 
 // CREATE
 //    function addMaintenance($message){

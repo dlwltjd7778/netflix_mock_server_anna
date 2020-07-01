@@ -19,6 +19,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/test', ['IndexController', 'test']);
     $r->addRoute('GET', '/test/{testNo}', ['IndexController', 'testDetail']);
 
+
+    $r->addRoute('GET', '/profiles', ['IndexController', 'getProfile']); // API No. 1
+
     $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
     $r->addRoute('PATCH', '/user/info', ['IndexController', 'insertUserInfo']); // API No. 8
     $r->addRoute('POST', '/payment', ['IndexController', 'insertPayment']); // API No. 10

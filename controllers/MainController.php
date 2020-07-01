@@ -44,10 +44,17 @@ try {
             // jwt 유효성 검사
             http_response_code(200);
 
-            if(!isValidUser($req->email, $req->pw)){
+            if(!isExistEmail($req->email)){
                 $res->isSuccess = FALSE;
                 $res->code = 200;
-                $res->message = "유효하지 않은 이메일 혹은 패스워드 입니다";
+                $res->message = "존재하지 않는 이메일입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+            if(!isValidUser($req->email, $req->pw)){
+                $res->isSuccess = FALSE;
+                $res->code = 210;
+                $res->message = "잘못된 패스워드 입니다";
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }

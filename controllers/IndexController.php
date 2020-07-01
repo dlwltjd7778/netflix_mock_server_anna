@@ -22,6 +22,26 @@ try {
             header('Content-Type: text/html; charset=UTF-8');
             getLogs("./logs/errors.log");
             break;
+
+        /*
+         * API No. 1
+         * API Name : 계정 ID에 따른 프로필 조회 API
+         * 마지막 수정 날짜 : 20.07.02
+        */
+        case "getProfile":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+
+            if(getProfile($userId)==null) {
+                $res->result = -1;
+            } else $res->result = getProfile($userId);
+            $res->addProfileAvailable = addProfileAvailable($userId);
+            $res->isSuccess = TRUE;
+            $res->code = 100;
+            $res->message = "프로필 조회 성공";
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
         /*
          * API No. 7
          * API Name : 회원가입 API
