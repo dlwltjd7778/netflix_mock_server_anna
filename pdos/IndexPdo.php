@@ -388,6 +388,27 @@ function getProfile($id){
 
 }
 
+// 찜한 컨텐츠 가져오기
+function getHearts($profileId){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT h.contentsId, c.thumbnailImgUrl,c.nfOriginal from heart h
+                    inner join contents c
+                        on c.id=h.contentsId
+                where h.profileId=? and c.isDeleted='N';";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
+
+}
+
 // 프로필 추가 가능 여부
 function addProfileAvailable($id){
     $pdo = pdoSqlConnect();

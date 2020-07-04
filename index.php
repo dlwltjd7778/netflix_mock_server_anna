@@ -35,6 +35,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 찜 관련
     $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['IndexController', 'heart']); // API No. 5
+    $r->addRoute('GET', '/profiles/{profileId}/hearts', ['IndexController', 'getHeart']); // API No. 6
 
 
 

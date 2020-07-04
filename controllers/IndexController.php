@@ -175,6 +175,39 @@ try {
             break;
 
         /*
+         * API No. 6
+         * API Name : 내가 찜한 컨텐츠 조회 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "getHeart":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else {
+
+                if(getHearts($profileId)==null){
+                    $res->result->profileId = $profileId;
+                    $res->result = -1;
+
+                } else {
+                    $res->result->profileId = $profileId;
+                    $res->result = getHearts($profileId);
+
+                }
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "조회 성공";
+            }
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+        /*
          * API No. 7
          * API Name : 회원가입 API
          * 마지막 수정 날짜 : 20.06.30
