@@ -91,7 +91,7 @@ try {
             $userId = getUserIdxByToken();
 
             if($req->cardNum==null || $req->expYear==null || $req->expMonth==null || $req->name==null ||
-                $req->bYear==null || $req->bMonth==null || $req->bDay==null){
+                $req->bYear==null || $req->bMonth==null || $req->bDay==null ||$req->ticketId==null){
                 $res->isSuccess = FALSE;
                 $res->code = 210;
                 $res->message = "null값 존재";
@@ -115,43 +115,20 @@ try {
                 $res->isSuccess = FALSE;
                 $res->code = 250;
                 $res->message = "잘못된 출생년도";
-            } else{
+            } else if(!(isExistTicketId($req->ticketId))){
+                $res->isSuccess = FALSE;
+                $res->code = 260;
+                $res->message = "존재하지않는 ticketId";
+            } else if((isExistPayment($userId))){
+                $res->isSuccess = FALSE;
+                $res->code = 270;
+                $res->message = "이미 이번 달 결제한 회원";
+            }else{
                 $birthDay = $req->bYear.".".$req->bMonth.".".$req->bDay;
 
                 insertUserInfo($req->cardNum, $req->expYear, $req->expMonth, $req->name, $birthDay, $userId);
-
-                $res->isSuccess = TRUE;
-                $res->code = 100;
-                $res->message = "등록 성공";
-            }
-            echo json_encode($res, JSON_NUMERIC_CHECK);
-            break;
-        /*
-         * API No. 10
-         * API Name : 결제 등록 API
-         * 마지막 수정 날짜 : 20.07.01
-        */
-        case "insertPayment":
-            http_response_code(200);
-            $userId = getUserIdxByToken();
-
-            if($req->ticketId==null){
-                $res->isSuccess = FALSE;
-                $res->code = 210;
-                $res->message = "null값 존재";
-            } else if(!(isExistTicketId($req->ticketId))){
-                $res->isSuccess = FALSE;
-                $res->code = 220;
-                    $res->message = "존재하지않는 ticketId";
-            } else if((isExistPayment($userId))){
-                $res->isSuccess = FALSE;
-                $res->code = 230;
-                $res->message = "이미 이번 달 결제한 회원";
-            } else{
-
                 $res->expDate = insertPayment($req->ticketId, $userId);
                 updateIsCanceled($userId);
-
                 $res->isSuccess = TRUE;
                 $res->code = 100;
                 $res->message = "등록 성공";
@@ -186,6 +163,128 @@ try {
             $res->message = "테스트 성공";
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
+        /*
+         * API No. 10
+         * API Name : 프로필이미지 종류 가져오기 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "getProfilesImg":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+
+            if(getProfilesImgUrl()==null) {
+                $res->result = -1;
+            } else {
+                $res->results->profileName =getProfilesImgName();
+                $res->results->details = getProfilesImgUrl();
+
+                $info->isSuccess = TRUE;
+                $info->code = 100;
+                $info->message = "프로필 조회 성공";
+                $res->info = $info;
+            }
+
+
+
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+
+        case "dbInsert":
+            http_response_code(200);
+//            for($i=1;$i<=298;$i++) {
+//                $title = urlencode(getTitle($i));
+//
+//                $curl = curl_init();
+//
+//                curl_setopt_array($curl, array(
+//                    CURLOPT_URL => "https://imdb8.p.rapidapi.com/title/find?q=" . $title . "",
+//                    CURLOPT_RETURNTRANSFER => true,
+//                    CURLOPT_FOLLOWLOCATION => true,
+//                    CURLOPT_ENCODING => "",
+//                    CURLOPT_MAXREDIRS => 10,
+//                    CURLOPT_TIMEOUT => 30,
+//                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//                    CURLOPT_CUSTOMREQUEST => "GET",
+//                    CURLOPT_HTTPHEADER => array(
+//                        "x-rapidapi-host: imdb8.p.rapidapi.com",
+//                        "x-rapidapi-key: 7990790a43msh87838b8de3b2d40p1f01b1jsn8d7c94b1134f"
+//                    ),
+//                ));
+//
+//                $response = curl_exec($curl);
+//                $err = curl_error($curl);
+//
+//                curl_close($curl);
+//
+//                if ($err) {
+//                    echo "cURL Error #:" . $err;
+//                } else {
+//                    $jiDung = json_decode($response);
+//                    $strTok = explode('/', $jiDung->results[0]->id);
+//                    $movieId = $strTok[2];
+//
+//                    $actor = "";
+//                    for ($j = 0; $j < sizeof($jiDung->results[0]->principals); $j++) {
+//                        if ($j != sizeof($jiDung->results[0]->principals) - 1) {
+//                            $actor = $actor . $jiDung->results[0]->principals[$j]->name . ", ";
+//                        } else {
+//                            $actor = $actor . $jiDung->results[0]->principals[$j]->name;
+//                        }
+//
+//                    }
+//                    echo $actor;
+//
+//                    $thumbnail = $jiDung->results[0]->image->url;
+//
+//                    insertMovieData($actor, $thumbnail, $movieId,$i);
+//
+//                    //  echo json_encode($jiDung->results[0], JSON_NUMERIC_CHECK);
+//
+//                    //echo $response;
+//                }
+//
+//            }
+//            break;
+//           // for($i=1;$i<=290;$i++) {
+//              //  $titleIdx = urlencode(getTitleIdx($i));
+//                $curl = curl_init();
+//
+//                curl_setopt_array($curl, array(
+//                    CURLOPT_URL => "https://imdb8.p.rapidapi.com/title/get-plots?tconst=" . "tt1289403" . "",
+//                    CURLOPT_RETURNTRANSFER => true,
+//                    CURLOPT_FOLLOWLOCATION => true,
+//                    CURLOPT_ENCODING => "",
+//                    CURLOPT_MAXREDIRS => 10,
+//                    CURLOPT_TIMEOUT => 30,
+//                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//                    CURLOPT_CUSTOMREQUEST => "GET",
+//                    CURLOPT_HTTPHEADER => array(
+//                        "x-rapidapi-host: imdb8.p.rapidapi.com",
+//                        "x-rapidapi-key: 17b52a9242msh9cb76529088f20dp18a1b6jsn0f08a88867fb"
+//                    ),
+//                ));
+//
+//                $response = curl_exec($curl);
+//                $err = curl_error($curl);
+//
+//                curl_close($curl);
+//
+//                if ($err) {
+//                    echo "cURL Error #:" . $err;
+//                } else {
+//                    $result = json_decode($response);
+//                    echo $result->plots[0]->text;
+//                    //echo $response;
+//                }
+//
+//                //insertMovieDetails($result->plots[0]->text, getTitleIdx($i));
+//          //  }
+//            break;
+
+
+
     }
 } catch (\Exception $e) {
     return getSQLErrorException($errorLogs, $e, $req);

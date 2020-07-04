@@ -21,6 +21,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
 
     $r->addRoute('GET', '/profiles', ['IndexController', 'getProfile']); // API No. 1
+    $r->addRoute('GET', '/profiles/images', ['IndexController', 'getProfilesImg']); // API No. 10
+
 
     $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
     $r->addRoute('PATCH', '/user/info', ['IndexController', 'insertUserInfo']); // API No. 8
@@ -30,6 +32,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('POST', '/login', ['MainController', 'createJwt']); // API No. 9
 
 
+    $r->addRoute('GET', '/d', ['IndexController', 'dbInsert']); // API No. 1
 
 //    $r->addRoute('GET', '/users', 'get_all_users_handler');
 //    // {id} must be a number (\d+)

@@ -1,5 +1,38 @@
 <?php
 
+function getTitle($id)
+{
+    $pdo = pdoSqlConnect();
+    $query = "SELECT title FROM contents where id=?;";
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st = null;
+    $pdo = null;
+
+    return $res[0][title];
+}
+function getTitleIdx($id)
+{
+    $pdo = pdoSqlConnect();
+    $query = "SELECT titleIdx FROM contents where id=?;";
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st = null;
+    $pdo = null;
+
+    return $res[0]["titleIdx"];
+}
+
 //READ
 function test()
 {
@@ -271,6 +304,64 @@ function addProfileAvailable($id){
 
     return $res[0][addProfileAvailable];
 
+}
+
+// contents에 data등록1
+function insertMovieData($actors, $thumbnailImgUrl, $titleIdx,$id)
+{
+    $pdo = pdoSqlConnect();
+    $query = "UPDATE contents SET actors=?, thumbnailImgUrl=?, titleIdx=?
+                where id=?;";
+    $st = $pdo->prepare($query);
+    $st->execute([$actors, $thumbnailImgUrl, $titleIdx,$id]);
+
+    $st = null;
+    $pdo = null;
+}
+
+// contents에 data등록2
+function insertMovieDetails($details, $titleIdx)
+{
+    $pdo = pdoSqlConnect();
+    $query = "UPDATE contents SET details=? where titleIdx=?;";
+    $st = $pdo->prepare($query);
+    $st->execute([$details, $titleIdx]);
+
+    $st = null;
+    $pdo = null;
+}
+
+function getProfilesImgName()
+{
+    $pdo = pdoSqlConnect();
+    $query = "select name from profileimgurl;";
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st = null;
+    $pdo = null;
+
+    return $res[0]["name"];
+}
+function getProfilesImgUrl()
+{
+    $pdo = pdoSqlConnect();
+    $query = "select id as profileImgId, profileImgUrl from profileimgurl;";
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st = null;
+    $pdo = null;
+
+    return $res;
 }
 
 // CREATE
