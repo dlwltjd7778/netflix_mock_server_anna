@@ -43,6 +43,37 @@ try {
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
         /*
+         * API No. 2
+         * API Name : 계정 ID에 따른 프로필 생성 API
+         * 마지막 수정 날짜 : 20.06.30
+         */
+        case "insertProfile":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileName = $req->profileName;
+            $profileImgId = $req->profileImgId;
+
+            if($profileName==null || $profileImgId==null){
+                $res->isSuccess = FALSE;
+                $res->code = 210;
+                $res->message = "null값 존재";
+            } else if(!isExistProfileImgId($profileImgId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필이미지Id";
+            } else if(!addProfileAvailable($userId)){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "더이상 프로필 추가 불가";
+            } else{
+                insertProfile($userId, $profileName, $profileImgId);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "프로필등록 성공";
+            }
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+        /*
          * API No. 7
          * API Name : 회원가입 API
          * 마지막 수정 날짜 : 20.06.30
@@ -178,14 +209,10 @@ try {
                 $res->results->profileName =getProfilesImgName();
                 $res->results->details = getProfilesImgUrl();
 
-                $info->isSuccess = TRUE;
-                $info->code = 100;
-                $info->message = "프로필 조회 성공";
-                $res->info = $info;
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "프로필 조회 성공";
             }
-
-
-
 
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;

@@ -184,7 +184,7 @@ function getUserIdxByToken(){
 
     if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
         $res->isSuccess = FALSE;
-        $res->code = 200;
+        $res->code = 333;
         $res->message = "유효하지 않은 토큰입니다";
         echo json_encode($res, JSON_NUMERIC_CHECK);
         addErrorLogs($errorLogs, $res, $req);

@@ -82,6 +82,20 @@ function insertUser($email, $pw)
     $pdo = null;
 }
 
+// 회원가입
+function insertProfile($userId, $name, $profileImgId)
+{
+    $pdo = pdoSqlConnect();
+    $query = "INSERT INTO profile (userId, name, profileImgId) VALUES (?,?,?);";
+
+    $st = $pdo->prepare($query);
+    $st->execute([$userId, $name, $profileImgId]);
+
+    $st = null;
+    $pdo = null;
+}
+
+
 // 회원 정보 등록
 function insertUserInfo($cardNum,$expYear,$expMonth, $name, $birthDay, $userId)
 {
@@ -223,7 +237,23 @@ function isExistPayment($userId){
     return intval($res[0]["exist"]);
 
 }
+// 존재하는 프로필이미지아이디인지 확인
+function isExistProfileImgId($id){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM profileimgurl WHERE id= ? ) AS exist;";
 
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
 
 // 정기결제여부 y로 등록
 function updateIsCanceled($userId)
