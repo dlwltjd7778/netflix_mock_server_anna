@@ -121,7 +121,31 @@ function deleteHeart($profileId, $contentsId)
     $pdo = null;
 }
 
+// 평가 추가
+function insertEvaluation($profileId, $contentsId, $choice)
+{
+    $pdo = pdoSqlConnect();
+    $query = "INSERT INTO evaluation (profileId, contentsId, choice) VALUES (?,?,?);";
 
+    $st = $pdo->prepare($query);
+    $st->execute([$profileId, $contentsId, $choice]);
+
+    $st = null;
+    $pdo = null;
+}
+
+// 평가 삭제
+function deleteEvaluation($profileId, $contentsId)
+{
+    $pdo = pdoSqlConnect();
+    $query = "DELETE FROM evaluation WHERE profileId=? and contentsId=?";
+
+    $st = $pdo->prepare($query);
+    $st->execute([$profileId, $contentsId]);
+
+    $st = null;
+    $pdo = null;
+}
 
 // 회원 정보 등록
 function insertUserInfo($cardNum,$expYear,$expMonth, $name, $birthDay, $userId)
@@ -317,6 +341,25 @@ function isExistHeart($profileId,$contentsId){
     return intval($res[0]["exist"]);
 
 }
+
+// 존재하는 evaluation인지 확인
+function isExistEvaluation($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM evaluation WHERE profileId= ? and contentsId=? ) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
+
 
 // 존재하는 contents인지 확인
 function isExistContentsId($contentsId){

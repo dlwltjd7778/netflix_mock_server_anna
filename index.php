@@ -27,15 +27,18 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('DELETE', '/profiles/{profileId}', ['IndexController', 'deleteProfile']); // API No. 4
     $r->addRoute('GET', '/profiles/images', ['IndexController', 'getProfilesImg']); // API No. 10
 
+    // 찜 관련
+    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['IndexController', 'heart']); // API No. 5
+    $r->addRoute('GET', '/profiles/{profileId}/hearts', ['IndexController', 'getHeart']); // API No. 6
 
     // 회원 관련
     $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
     $r->addRoute('PATCH', '/user/info', ['IndexController', 'insertUserInfo']); // API No. 8
     $r->addRoute('POST', '/login', ['MainController', 'createJwt']); // API No. 9
 
-    // 찜 관련
-    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['IndexController', 'heart']); // API No. 5
-    $r->addRoute('GET', '/profiles/{profileId}/hearts', ['IndexController', 'getHeart']); // API No. 6
+    // 평가 관련
+    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/eval', ['IndexController', 'evalInsert']); // API No. 11
+  
 
 
 

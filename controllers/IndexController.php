@@ -301,6 +301,80 @@ try {
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
 
+        /*
+         * API No. 10
+         * API Name : 프로필이미지 종류 가져오기 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "getProfilesImg":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+
+            if(getProfilesImgUrl()==null) {
+                $res->result = -1;
+            } else {
+                $res->results->profileName =getProfilesImgName();
+                $res->results->details = getProfilesImgUrl();
+
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "프로필 조회 성공";
+            }
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+        /*
+         * API No. 11
+         * API Name : 평가 등록 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "evalInsert":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+            $contentsId = $vars["contentsId"];
+            $choice = $req->choice;
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else if(!(isExistContentsId($contentsId))){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "존재하지 않는 컨텐츠Id";
+
+            } else if(isExistEvaluation($profileId,$contentsId)){
+                deleteEvaluation($profileId, $contentsId);
+                $res->result->profileId = $profileId;
+                $res->result->contentsId = $contentsId;
+                $res->result->evalStatus = 'deleted';
+
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "평가 삭제 성공";
+            } else if(!($choice=='G'||$choice=='B')){
+                $res->isSuccess = FALSE;
+                $res->code = 240;
+                $res->message = "choice는 G, B 중 한가지 가능";
+
+            } else if(!(isExistEvaluation($profileId,$contentsId))){
+                insertEvaluation($profileId, $contentsId, $choice);
+                $res->result->profileId = $profileId;
+                $res->result->contentsId = $contentsId;
+                $res->result->evalStatus = 'activated';
+                $res->result->choice = $choice;
+
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "평가 추가 성공";
+
+            }
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
 
         /*
          * API No. 0
@@ -328,28 +402,7 @@ try {
             $res->message = "테스트 성공";
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
-        /*
-         * API No. 10
-         * API Name : 프로필이미지 종류 가져오기 API
-         * 마지막 수정 날짜 : 20.07.04
-        */
-        case "getProfilesImg":
-            http_response_code(200);
-            $userId = getUserIdxByToken();
 
-            if(getProfilesImgUrl()==null) {
-                $res->result = -1;
-            } else {
-                $res->results->profileName =getProfilesImgName();
-                $res->results->details = getProfilesImgUrl();
-
-                $res->isSuccess = TRUE;
-                $res->code = 100;
-                $res->message = "프로필 조회 성공";
-            }
-
-            echo json_encode($res, JSON_NUMERIC_CHECK);
-            break;
 
 
         case "dbInsert":
