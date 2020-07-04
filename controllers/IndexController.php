@@ -106,6 +106,30 @@ try {
             }
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
+
+        /*
+        * API No. 4
+        * API Name : 계정 ID에 따른 프로필 삭제 API
+        * 마지막 수정 날짜 : 20.07.04
+       */
+        case "deleteProfile":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+            } else{
+                deleteProfile($profileId, $userId);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "프로필 삭제 성공";
+            }
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
         /*
          * API No. 7
          * API Name : 회원가입 API

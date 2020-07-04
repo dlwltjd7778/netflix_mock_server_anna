@@ -366,6 +366,18 @@ function updateProfile($name, $profileImgId, $id)
     $pdo = null;
 }
 
+// 프로필 삭제
+function deleteProfile($id, $userId)
+{
+    $pdo = pdoSqlConnect();
+    $query = "UPDATE profile SET isDeleted='Y' where id=? and userId=?;";
+    $st = $pdo->prepare($query);
+    $st->execute([$id, $userId]);
+
+    $st = null;
+    $pdo = null;
+}
+
 // contents에 data등록1
 function insertMovieData($actors, $thumbnailImgUrl, $titleIdx,$id)
 {
