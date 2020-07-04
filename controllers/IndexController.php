@@ -108,10 +108,10 @@ try {
             break;
 
         /*
-        * API No. 4
-        * API Name : 계정 ID에 따른 프로필 삭제 API
-        * 마지막 수정 날짜 : 20.07.04
-       */
+         * API No. 4
+         * API Name : 계정 ID에 따른 프로필 삭제 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
         case "deleteProfile":
             http_response_code(200);
             $userId = getUserIdxByToken();
@@ -126,6 +126,50 @@ try {
                 $res->isSuccess = TRUE;
                 $res->code = 100;
                 $res->message = "프로필 삭제 성공";
+            }
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+        /*
+         * API No. 5
+         * API Name : 내가 찜한 컨텐츠 추가 및 삭제 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "heart":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+            $contentsId = $vars["contentsId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else if(!(isExistContentsId($contentsId))){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "존재하지 않는 컨텐츠Id";
+
+            } else if(!(isExistHeart($profileId,$contentsId))){
+                insertHeart($profileId, $contentsId);
+                $res->result->profileId = $profileId;
+                $res->result->contentsId = $contentsId;
+                $res->result->heartStatus = 'activated';
+
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "찜 추가 성공";
+
+            } else if(isExistHeart($profileId,$contentsId)){
+                deleteHeart($profileId, $contentsId);
+                $res->result->profileId = $profileId;
+                $res->result->contentsId = $contentsId;
+                $res->result->heartStatus = 'deleted';
+
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "찜 삭제 성공";
             }
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;

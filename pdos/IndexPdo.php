@@ -82,7 +82,7 @@ function insertUser($email, $pw)
     $pdo = null;
 }
 
-// 회원가입
+// 프로필 추가
 function insertProfile($userId, $name, $profileImgId)
 {
     $pdo = pdoSqlConnect();
@@ -94,6 +94,33 @@ function insertProfile($userId, $name, $profileImgId)
     $st = null;
     $pdo = null;
 }
+
+// 찜 추가
+function insertHeart($profileId, $contentsId)
+{
+    $pdo = pdoSqlConnect();
+    $query = "INSERT INTO heart (profileId, contentsId) VALUES (?,?);";
+
+    $st = $pdo->prepare($query);
+    $st->execute([$profileId, $contentsId]);
+
+    $st = null;
+    $pdo = null;
+}
+
+// 찜 삭제
+function deleteHeart($profileId, $contentsId)
+{
+    $pdo = pdoSqlConnect();
+    $query = "DELETE FROM heart WHERE profileId=? and contentsId=?";
+
+    $st = $pdo->prepare($query);
+    $st->execute([$profileId, $contentsId]);
+
+    $st = null;
+    $pdo = null;
+}
+
 
 
 // 회원 정보 등록
@@ -220,7 +247,7 @@ function insertPayment($userId, $ticketId)
     return date("Y-m-d H:i:s", $timestamp);
 }
 
-// 존재하는 ticketId인지 확인
+// 존재하는 결제?
 function isExistPayment($userId){
     $pdo = pdoSqlConnect();
     $query = "SELECT EXISTS(SELECT * FROM payment WHERE userId= ? AND payDate<=NOW() AND expDate>=NOW()) AS exist;";
@@ -264,6 +291,42 @@ function isExistProfile($userId,$id){
     $st = $pdo->prepare($query);
     //    $st->execute([$param,$param]);
     $st->execute([$userId,$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
+
+// 존재하는 heart인지 확인
+function isExistHeart($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM heart WHERE profileId= ? and contentsId=? ) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
+
+// 존재하는 contents인지 확인
+function isExistContentsId($contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM contents WHERE id= ? and isDeleted='N' ) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$contentsId]);
     $st->setFetchMode(PDO::FETCH_ASSOC);
     $res = $st->fetchAll();
 
