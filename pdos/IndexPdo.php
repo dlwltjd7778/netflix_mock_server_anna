@@ -255,6 +255,24 @@ function isExistProfileImgId($id){
 
 }
 
+// 존재하는 프로필아이디인지 확인
+function isExistProfile($userId,$id){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM profile WHERE userId= ? and id=? ) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$userId,$id]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
+
 // 정기결제여부 y로 등록
 function updateIsCanceled($userId)
 {
@@ -334,6 +352,18 @@ function addProfileAvailable($id){
 
     return $res[0][addProfileAvailable];
 
+}
+
+// 프로필 수정
+function updateProfile($name, $profileImgId, $id)
+{
+    $pdo = pdoSqlConnect();
+    $query = "UPDATE profile SET name=?, profileImgId=? where id=?;";
+    $st = $pdo->prepare($query);
+    $st->execute([$name, $profileImgId, $id]);
+
+    $st = null;
+    $pdo = null;
 }
 
 // contents에 data등록1

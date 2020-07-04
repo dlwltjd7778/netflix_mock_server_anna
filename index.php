@@ -21,11 +21,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
 
     $r->addRoute('GET', '/profiles', ['IndexController', 'getProfile']); // API No. 1
+    $r->addRoute('POST', '/profiles', ['IndexController', 'insertProfile']); // API No. 2
+    $r->addRoute('PATCH', '/profiles/{profileId}', ['IndexController', 'updateProfile']); // API No. 3
+    $r->addRoute('DELETE', '/profiles/{profileId}', ['IndexController', 'deleteProfile']); // API No. 4
     $r->addRoute('GET', '/profiles/images', ['IndexController', 'getProfilesImg']); // API No. 10
 
 
+
     $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
-    $r->addRoute('POST', '/profiles', ['IndexController', 'insertProfile']); // API No. 2
     $r->addRoute('PATCH', '/user/info', ['IndexController', 'insertUserInfo']); // API No. 8
     $r->addRoute('POST', '/payment', ['IndexController', 'insertPayment']); // API No. 10
 

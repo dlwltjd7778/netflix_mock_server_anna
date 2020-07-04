@@ -45,7 +45,7 @@ try {
         /*
          * API No. 2
          * API Name : 계정 ID에 따른 프로필 생성 API
-         * 마지막 수정 날짜 : 20.06.30
+         * 마지막 수정 날짜 : 20.07.04
          */
         case "insertProfile":
             http_response_code(200);
@@ -64,12 +64,45 @@ try {
             } else if(!addProfileAvailable($userId)){
                 $res->isSuccess = FALSE;
                 $res->code = 230;
-                $res->message = "더이상 프로필 추가 불가";
+                $res->message = "더이상 프로필 추가 불가 or 이용권 구매x";
             } else{
                 insertProfile($userId, $profileName, $profileImgId);
                 $res->isSuccess = TRUE;
                 $res->code = 100;
                 $res->message = "프로필등록 성공";
+            }
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+        /*
+         * API No. 3
+         * API Name : 계정 ID에 따른 프로필 수정 API
+         * 마지막 수정 날짜 : 20.07.04
+        */
+        case "updateProfile":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileName = $req->profileName;
+            $profileImgId = $req->profileImgId;
+            $profileId = $vars["profileId"];
+
+            if($profileName==null || $profileImgId==null){
+                $res->isSuccess = FALSE;
+                $res->code = 210;
+                $res->message = "null값 존재";
+            } else if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+            } else if(!isExistProfileImgId($profileImgId)){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "존재하지 않는 프로필이미지Id";
+            } else{
+                updateProfile($profileName, $profileImgId, $profileId);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "프로필 수정 성공";
             }
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
