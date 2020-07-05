@@ -34,8 +34,8 @@ try {
 
             if(getProfile($userId)==null) {
                 $res->result = -1;
-            } else $res->result = getProfile($userId);
-            $res->addProfileAvailable = addProfileAvailable($userId);
+            } else {$res->result = getProfile($userId);
+            $res->addProfileAvailable = addProfileAvailable($userId);}
             $res->isSuccess = TRUE;
             $res->code = 100;
             $res->message = "프로필 조회 성공";
@@ -326,7 +326,7 @@ try {
 
         /*
          * API No. 11
-         * API Name : 평가 등록 API
+         * API Name : 평가 등록 및 삭제 API
          * 마지막 수정 날짜 : 20.07.04
         */
         case "evalInsert":
@@ -375,6 +375,62 @@ try {
 
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
+
+        /*
+         * API No. 12
+         * API Name : 컨텐츠 상세 정보 조회 API
+         * 마지막 수정 날짜 : 20.07.05
+        */
+        case "getDetails":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+            $contentsId = $vars["contentsId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else if(!(isExistContentsId($contentsId))){
+                $res->isSuccess = FALSE;
+                $res->code = 230;
+                $res->message = "존재하지 않는 컨텐츠Id";
+
+            } else {
+
+                // 클릭 수 증가
+                if(isExistClick($profileId,$contentsId)) addClickCnt($profileId,$contentsId);
+                else insertClick($profileId,$contentsId);
+
+                // 컨텐츠 정보 가져오기
+                $res->result->contentsInfo = getContentsDetail($contentsId);
+
+                // 장르 가져오기
+                $genres = explode(',' , getContentsDetail($contentsId)["genres"]);
+
+                // 찜한 컨텐츠 상태 불러오기
+                if(isExistHeart($profileId,$contentsId)) $res->result->heartStatus = 'Y';
+                else $res->result->heartStatus = 'N';
+
+                // 평가 컨텐츠 상태 불러오기
+                if(getEvaluationStatus($profileId,$contentsId)!=null){
+                    $res->result->evaluationStatus = getEvaluationStatus($profileId,$contentsId);
+                } else {
+                    $res->result->evaluationStatus = 'N';
+                }
+
+                // 겹치는 장르 높은 순으로 비슷한 콘텐츠 추천
+                $res-> similarContents = getSimilarContents($genres,$contentsId);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "조회 성공";
+
+            }
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
 
         /*
          * API No. 0

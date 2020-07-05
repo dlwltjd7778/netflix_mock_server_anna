@@ -38,7 +38,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 평가 관련
     $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/eval', ['IndexController', 'evalInsert']); // API No. 11
-  
+
+    // 상세 보기
+    $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['IndexController', 'getDetails']); // API No. 12
 
 
 

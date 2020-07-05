@@ -184,7 +184,57 @@ function isValidexpDate($expDate){
     return preg_match($pwPattern ,$expDate);
 }
 
+// 장르 가져오기
+function getGenresByContentsId($contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "select genre from genre where contentsId=?;";
 
+
+    $st = $pdo->prepare($query);
+    $st->execute([$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res;
+}
+
+// 상세보기에서 비슷한 컨텐츠 가져오기
+function getSimilarContents($genres, $contentsId){
+    $in_list = empty($genres)?'NULL':"'".join("','", $genres)."'";
+    $pdo = pdoSqlConnect();
+    $query = "select g.contentsId,c.thumbnailImgUrl from genre g
+        inner join contents c
+        on c.id = g.contentsId
+        where g.genre in({$in_list}) and g.contentsId != ?
+        group by g.contentsId
+        order by count(g.contentsId) desc, rand()
+        limit 6;";
+
+
+    $st = $pdo->prepare($query);
+    $st->execute([$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res;
+}
+
+// 장르로 컨텐츠 검색
+function searchContentsByGenre($genre){
+    $pdo = pdoSqlConnect();
+    $query = "select id,thumbnailImgUrl,genres from contents where genres LIKE '%".$genre."%';";
+
+
+    $st = $pdo->prepare($query);
+    $st->execute([]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res;
+}
 
 // userId 이메일로 찾기
 function getUserIdbyEmail($email){
@@ -309,7 +359,7 @@ function isExistProfileImgId($id){
 // 존재하는 프로필아이디인지 확인
 function isExistProfile($userId,$id){
     $pdo = pdoSqlConnect();
-    $query = "SELECT EXISTS(SELECT * FROM profile WHERE userId= ? and id=? ) AS exist;";
+    $query = "SELECT EXISTS(SELECT * FROM profile WHERE userId= ? and id=? and isDeleted='N' ) AS exist;";
 
 
     $st = $pdo->prepare($query);
@@ -357,6 +407,24 @@ function isExistEvaluation($profileId,$contentsId){
     $st=null;$pdo = null;
 
     return intval($res[0]["exist"]);
+
+}
+
+// evaluation 상태 확인
+function getEvaluationStatus($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "select choice from evaluation where profileId=? and contentsId = ?;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res[0]["choice"];
 
 }
 
@@ -449,6 +517,76 @@ function getHearts($profileId){
     $st=null;$pdo = null;
 
     return $res;
+
+}
+
+// 컨텐츠 상세정보 가져오기
+function getContentsDetail($contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "select genres, thumbnailImgUrl, year,age,concat(runtime div 60,'시간 ',mod(runtime,60),'분') as runtime,videoUrl,details,actors,directors
+                from contents
+                where id=? and isDeleted='N';";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res[0];
+
+}
+
+// 존재하는 click인지 확인
+function isExistClick($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT * FROM click WHERE profileId=? and contentsId=?) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+
+}
+
+// click insert
+function insertClick($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "insert into click (profileId,contentsId) values (?,?);";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+   // $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+}
+
+// click 수 추가
+function addClickCnt($profileId,$contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "update click set clickCnt = clickCnt+1 where profileId=? and contentsId = ?;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$profileId,$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+
+
+    $st=null;$pdo = null;
 
 }
 
