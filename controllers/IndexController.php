@@ -431,34 +431,31 @@ try {
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
 
-
         /*
-         * API No. 0
-         * API Name : 테스트 Path Variable API
-         * 마지막 수정 날짜 : 19.04.29
-         */
-        case "testDetail":
+          * API No. 13
+          * API Name : 넷플릭스 오리지널 컨텐츠 조회 API
+          * 마지막 수정 날짜 : 20.07.06
+        */
+        case "getNfOriginal":
             http_response_code(200);
-            $res->result = testDetail($vars["testNo"]);
-            $res->isSuccess = TRUE;
-            $res->code = 100;
-            $res->message = "테스트 성공";
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else {
+                $res->result = getNfOriginal();
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "넷플릭스 오리지널 컨텐츠 조회 성공";
+
+            }
+
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
-        /*
-         * API No. 0
-         * API Name : 테스트 Body & Insert API
-         * 마지막 수정 날짜 : 19.04.29
-         */
-        case "testPost":
-            http_response_code(200);
-            $res->result = testPost($req->name);
-            $res->isSuccess = TRUE;
-            $res->code = 100;
-            $res->message = "테스트 성공";
-            echo json_encode($res, JSON_NUMERIC_CHECK);
-            break;
-
 
 
         case "dbInsert":

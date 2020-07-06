@@ -29,7 +29,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 찜 관련
     $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['IndexController', 'heart']); // API No. 5
-    $r->addRoute('GET', '/profiles/{profileId}/hearts', ['IndexController', 'getHeart']); // API No. 6
+    $r->addRoute('GET', '/profiles/{profileId}/contents/hearts', ['IndexController', 'getHeart']); // API No. 6
 
     // 회원 관련
     $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
@@ -41,6 +41,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 상세 보기
     $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['IndexController', 'getDetails']); // API No. 12
+
+    // 홈화면
+    $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['IndexController', 'getNfOriginal']); // API No. 13
 
 
 

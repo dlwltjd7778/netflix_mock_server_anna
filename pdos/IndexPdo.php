@@ -203,7 +203,7 @@ function getGenresByContentsId($contentsId){
 function getSimilarContents($genres, $contentsId){
     $in_list = empty($genres)?'NULL':"'".join("','", $genres)."'";
     $pdo = pdoSqlConnect();
-    $query = "select g.contentsId,c.thumbnailImgUrl from genre g
+    $query = "select g.contentsId,c.thumbnailImgUrl,c.nfOriginal from genre g
         inner join contents c
         on c.id = g.contentsId
         where g.genre in({$in_list}) and g.contentsId != ?
@@ -523,7 +523,7 @@ function getHearts($profileId){
 // 컨텐츠 상세정보 가져오기
 function getContentsDetail($contentsId){
     $pdo = pdoSqlConnect();
-    $query = "select genres, thumbnailImgUrl, year,age,concat(runtime div 60,'시간 ',mod(runtime,60),'분') as runtime,videoUrl,details,actors,directors
+    $query = "select genres, thumbnailImgUrl,nfOriginal,year,age,concat(runtime div 60,'시간 ',mod(runtime,60),'분') as runtime,videoUrl,details,actors,directors
                 from contents
                 where id=? and isDeleted='N';";
 
@@ -537,6 +537,26 @@ function getContentsDetail($contentsId){
     $st=null;$pdo = null;
 
     return $res[0];
+
+}
+
+// 넷플릭스 오리지널 최신순으로 가져오기
+function getNfOriginal(){
+    $pdo = pdoSqlConnect();
+    $query = "select id,thumbnailImgUrl,nfOriginal from contents 
+                where nfOriginal='Y'
+                order by year desc limit 20;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
 
 }
 
