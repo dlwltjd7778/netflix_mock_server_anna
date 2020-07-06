@@ -221,6 +221,49 @@ function getSimilarContents($genres, $contentsId){
     return $res;
 }
 
+// 프로필 id에 따른 내가 찜한 컨텐츠와 비슷한 장르 3개 추출
+function getHeartContentsGenreByProfileId($profileId){
+    $pdo = pdoSqlConnect();
+    $query = "select group_concat(a.genre) as genre from
+                (select  g.genre from heart h
+                left join genre g
+                on g.contentsId = h.contentsId
+                where h.profileId=?
+                group by g.genre
+                order by count(g.genre) desc, rand() limit 3 ) as a;";
+
+
+    $st = $pdo->prepare($query);
+    $st->execute([$profileId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res[0]["genre"];
+}
+
+// 상세보기에서 비슷한 컨텐츠 가져오기
+function getRecommendContents($genres){
+    $in_list = empty($genres)?'NULL':"'".join("','", $genres)."'";
+    $pdo = pdoSqlConnect();
+    $query = "select g.contentsId,c.thumbnailImgUrl,c.nfOriginal from genre g
+                inner join contents c
+                    on c.id = g.contentsId
+            where g.genre in({$in_list})
+            group by g.contentsId
+            order by count(g.contentsId) desc, rand() limit 15;";
+
+
+    $st = $pdo->prepare($query);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res;
+}
+
+
 // 장르로 컨텐츠 검색
 function searchContentsByGenre($genre){
     $pdo = pdoSqlConnect();

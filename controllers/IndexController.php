@@ -483,6 +483,36 @@ try {
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
 
+        /*
+         * API No. 15
+         * API Name : 유저별 추천 컨텐츠 조회 API
+         * 마지막 수정 날짜 : 20.07.06
+        */
+        case "getRecommend":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else {
+
+                // 내가 찜한 컨텐츠의 상위 3개 장르 가져오기
+                $genres = explode(',' , getHeartContentsGenreByProfileId($profileId));
+
+                // 겹치는 장르 높은 순으로 비슷한 콘텐츠 추천
+                $res-> recommendContents = getRecommendContents($genres);
+                $res->isSuccess = TRUE;
+                $res->code = 100;
+                $res->message = "조회 성공";
+
+            }
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
 
         case "dbInsert":
             http_response_code(200);

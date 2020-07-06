@@ -39,15 +39,18 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     // 평가 관련
     $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/eval', ['IndexController', 'evalInsert']); // API No. 11
 
+    // 홈화면
+    $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['IndexController', 'getNfOriginal']); // API No. 13
+    $r->addRoute('GET', '/profiles/{profileId}/contents/top10', ['IndexController', 'getTop10']); // API No. 14
+    $r->addRoute('GET', '/profiles/{profileId}/contents/recommend', ['IndexController', 'getRecommend']); // API No. 15
+
+
     // 상세 보기
     $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['IndexController', 'getDetails']); // API No. 12
 
-    // 홈화면
-    $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['IndexController', 'getNfOriginal']); // API No. 13
-    $r->addRoute('GET', '/profiles/{profileId}/contents/movie/top10', ['IndexController', 'getTop10']); // API No. 14
 
 
-
+    
     $r->addRoute('GET', '/jwt', ['MainController', 'validateJwt']);
 
     $r->addRoute('GET', '/d', ['IndexController', 'dbInsert']); // movie 데이터 삽입
