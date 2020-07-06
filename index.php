@@ -44,6 +44,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 홈화면
     $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['IndexController', 'getNfOriginal']); // API No. 13
+    $r->addRoute('GET', '/profiles/{profileId}/contents/movie/top10', ['IndexController', 'getTop10']); // API No. 14
 
 
 

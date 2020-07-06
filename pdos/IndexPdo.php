@@ -560,6 +560,29 @@ function getNfOriginal(){
 
 }
 
+// 조회수 높은순 가져오기
+function getTop10(){
+    $pdo = pdoSqlConnect();
+    $query = "select c.contentsId, ct.thumbnailImgUrl, ct.nfOriginal from click c
+                inner join contents ct
+                on ct.id = c.contentsId
+                where ct.isDeleted='N'
+                group by c.contentsId
+                order by sum(c.clickCnt) desc limit 10;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
+
+}
+
 // 존재하는 click인지 확인
 function isExistClick($profileId,$contentsId){
     $pdo = pdoSqlConnect();
