@@ -44,13 +44,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/profiles/{profileId}/contents/top10', ['IndexController', 'getTop10']); // API No. 14
     $r->addRoute('GET', '/profiles/{profileId}/contents/recommend', ['IndexController', 'getRecommend']); // API No. 15
 
+    // 검색
+    $r->addRoute('GET', '/profiles/{profileId}/contents/search', ['IndexController', 'searchContents']); // API No. 16
+
 
     // 상세 보기
     $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['IndexController', 'getDetails']); // API No. 12
 
 
 
-    
+
     $r->addRoute('GET', '/jwt', ['MainController', 'validateJwt']);
 
     $r->addRoute('GET', '/d', ['IndexController', 'dbInsert']); // movie 데이터 삽입

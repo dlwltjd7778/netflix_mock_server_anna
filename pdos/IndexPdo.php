@@ -583,6 +583,43 @@ function getContentsDetail($contentsId){
 
 }
 
+// 검색결과 상위 21개
+function getContentsByKeyword($keyword){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT a.id,a.thumbnailImgUrl, a.nfOriginal
+              FROM(
+                    SELECT id,title ,actors ,thumbnailImgUrl, nfOriginal
+                    FROM contents
+                    WHERE (replace(title,' ','') like('%".$keyword."%') or replace(actors,' ','') like('%".$keyword."%')) and isDeleted='N'
+                    UNION
+                    SELECT id,title ,actors ,thumbnailImgUrl, nfOriginal
+                    FROM contents
+                    WHERE (match(title, actors) against('".$keyword."*' in boolean mode) ) and isDeleted='N'
+                    ORDER BY (CASE WHEN title like '".$keyword."' THEN 0
+                                   WHEN title like '".$keyword."%' THEN 1
+                                   WHEN title like '%".$keyword."%' THEN 2
+                                   WHEN title like '%".$keyword."'THEN 3
+                                   WHEN actors like '".$keyword."' THEN 0
+                                   WHEN actors like '".$keyword."%' THEN 1
+                                   WHEN actors like '%".$keyword."%' THEN 2
+                                   WHEN actors like '%".$keyword."' THEN 3
+                                   ELSE 4
+                                END) limit 21
+                ) as a;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
+
+}
+
 // 넷플릭스 오리지널 최신순으로 가져오기
 function getNfOriginal(){
     $pdo = pdoSqlConnect();
