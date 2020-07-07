@@ -399,9 +399,18 @@ try {
 
             } else {
 
-                // 클릭 수 증가
-                if(isExistClick($profileId,$contentsId)) addClickCnt($profileId,$contentsId);
-                else insertClick($profileId,$contentsId);
+                // 검색어로 유입 시 조회수 증가
+                if($req->searchStatus=='Y'){
+                    addSearchCnt($contentsId);
+                }
+
+                // 조회 수 증가
+                if(isExistClick($profileId,$contentsId)) {
+                    addClickCnt($profileId,$contentsId);
+                }
+                else {
+                    insertClick($profileId,$contentsId);
+                }
 
                 // 컨텐츠 정보 가져오기
                 $res->result->contentsInfo = getContentsDetail($contentsId);
@@ -548,14 +557,38 @@ try {
                     $res->code = 100;
                     $res->message = "검색어로 조회 성공";
                 }
-
-
-
             }
 
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
 
+
+        /*
+         * API No. 17
+         * API Name : 인기 검색 컨텐츠 조회 API
+         * 마지막 수정 날짜 : 20.07.07
+        */
+        case "getPopularSearchContents":
+            http_response_code(200);
+            $userId = getUserIdxByToken();
+            $profileId = $vars["profileId"];
+
+            if(!isExistProfile($userId,$profileId)){
+                $res->isSuccess = FALSE;
+                $res->code = 220;
+                $res->message = "존재하지 않는 프로필";
+
+            } else {
+                    $res-> result = getPopularSearchContents();
+                    $res-> searchStatus = 'Y';
+                    $res->isSuccess = TRUE;
+                    $res->code = 100;
+                    $res->message = "인기 검색 컨텐츠 조회 성공";
+
+            }
+
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
         case "dbInsert":
             http_response_code(200);
 //            for($i=1;$i<=298;$i++) {

@@ -713,6 +713,41 @@ function addClickCnt($profileId,$contentsId){
 
 }
 
+// 검색어로 click 수 추가
+function addSearchCnt($contentsId){
+    $pdo = pdoSqlConnect();
+    $query = "update contents set searchCnt = searchCnt+1 where id=?;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$contentsId]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+
+
+    $st=null;$pdo = null;
+
+}
+
+// 인기 검색 컨텐츠 가져오기
+function getPopularSearchContents(){
+    $pdo = pdoSqlConnect();
+    $query = "select id,thumbnailImgUrl,nfOriginal, videoUrl
+                from contents where isDeleted='N'
+                order by searchCnt desc,year desc limit 30;";
+
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+    return $res;
+}
+
+
 // 프로필 추가 가능 여부
 function addProfileAvailable($id){
     $pdo = pdoSqlConnect();

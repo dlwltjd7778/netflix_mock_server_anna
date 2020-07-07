@@ -46,6 +46,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // 검색
     $r->addRoute('GET', '/profiles/{profileId}/contents/search', ['IndexController', 'searchContents']); // API No. 16
+    $r->addRoute('GET', '/profiles/{profileId}/contents/popular/search', ['IndexController', 'getPopularSearchContents']); // API No. 17
 
 
     // 상세 보기
