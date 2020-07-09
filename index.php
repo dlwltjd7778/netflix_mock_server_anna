@@ -21,36 +21,36 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
 
     // 프로필 관련
-    $r->addRoute('GET', '/profiles', ['IndexController', 'getProfile']); // API No. 1
-    $r->addRoute('POST', '/profiles', ['IndexController', 'insertProfile']); // API No. 2
-    $r->addRoute('PATCH', '/profiles/{profileId}', ['IndexController', 'updateProfile']); // API No. 3
-    $r->addRoute('DELETE', '/profiles/{profileId}', ['IndexController', 'deleteProfile']); // API No. 4
-    $r->addRoute('GET', '/profiles/images', ['IndexController', 'getProfilesImg']); // API No. 10
+    $r->addRoute('GET', '/profiles', ['ProfileController', 'getProfile']); // API No. 1
+    $r->addRoute('POST', '/profiles', ['ProfileController', 'insertProfile']); // API No. 2
+    $r->addRoute('PATCH', '/profiles/{profileId}', ['ProfileController', 'updateProfile']); // API No. 3
+    $r->addRoute('DELETE', '/profiles/{profileId}', ['ProfileController', 'deleteProfile']); // API No. 4
+    $r->addRoute('GET', '/profiles/images', ['ProfileController', 'getProfilesImg']); // API No. 10
 
     // 찜 관련
-    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['IndexController', 'heart']); // API No. 5
-    $r->addRoute('GET', '/profiles/{profileId}/contents/hearts', ['IndexController', 'getHeart']); // API No. 6
+    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/heart', ['HeartController', 'heart']); // API No. 5
+    $r->addRoute('GET', '/profiles/{profileId}/contents/hearts', ['HeartController', 'getHeart']); // API No. 6
 
     // 회원 관련
-    $r->addRoute('POST', '/user', ['IndexController', 'insertUser']); // API No. 7
-    $r->addRoute('PATCH', '/user/info', ['IndexController', 'insertUserInfo']); // API No. 8
+    $r->addRoute('POST', '/user', ['UserController', 'insertUser']); // API No. 7
+    $r->addRoute('PATCH', '/user/info', ['UserController', 'insertUserInfo']); // API No. 8
     $r->addRoute('POST', '/login', ['MainController', 'createJwt']); // API No. 9
 
     // 평가 관련
-    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/eval', ['IndexController', 'evalInsert']); // API No. 11
+    $r->addRoute('POST', '/profiles/{profileId}/contents/{contentsId}/eval', ['EvaluateController', 'evalInsert']); // API No. 11
 
     // 홈화면
-    $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['IndexController', 'getNfOriginal']); // API No. 13
-    $r->addRoute('GET', '/profiles/{profileId}/contents/top10', ['IndexController', 'getTop10']); // API No. 14
-    $r->addRoute('GET', '/profiles/{profileId}/contents/recommend', ['IndexController', 'getRecommend']); // API No. 15
+    $r->addRoute('GET', '/profiles/{profileId}/contents/netflix/original', ['HomeController', 'getNfOriginal']); // API No. 13
+    $r->addRoute('GET', '/profiles/{profileId}/contents/top10', ['HomeController', 'getTop10']); // API No. 14
+    $r->addRoute('GET', '/profiles/{profileId}/contents/recommend', ['HomeController', 'getRecommend']); // API No. 15
 
     // 검색
-    $r->addRoute('GET', '/profiles/{profileId}/contents/search', ['IndexController', 'searchContents']); // API No. 16
-    $r->addRoute('GET', '/profiles/{profileId}/contents/popular/search', ['IndexController', 'getPopularSearchContents']); // API No. 17
+    $r->addRoute('GET', '/profiles/{profileId}/contents/search', ['SearchController', 'searchContents']); // API No. 16
+    $r->addRoute('GET', '/profiles/{profileId}/contents/popular/search', ['SearchController', 'getPopularSearchContents']); // API No. 17
 
 
     // 상세 보기
-    $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['IndexController', 'getDetails']); // API No. 12
+    $r->addRoute('GET', '/profiles/{profileId}/contents/{contentsId}', ['DetailController', 'getDetails']); // API No. 12
 
 
 
@@ -115,30 +115,55 @@ switch ($routeInfo[0]) {
                 $vars = $routeInfo[2];
                 require './controllers/MainController.php';
                 break;
-            /*case 'EventController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/EventController.php';
+            case 'ProfileController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/ProfileController.php';
                 break;
-            case 'ProductController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/ProductController.php';
+            case 'HeartController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/HeartController.php';
+                break;
+            case 'UserController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/UserController.php';
+                break;
+            case 'EvaluateController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/EvaluateController.php';
+                break;
+            case 'HomeController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/HomeController.php';
                 break;
             case 'SearchController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
                 require './controllers/SearchController.php';
                 break;
-            case 'ReviewController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/ReviewController.php';
-                break;
-            case 'ElementController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/ElementController.php';
-                break;
-            case 'AskFAQController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/AskFAQController.php';
-                break;*/
+             case 'DetailController':
+                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
+                 require './controllers/DetailController.php';
+                 break;
+            /* case 'SearchController':
+                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
+                 require './controllers/SearchController.php';
+                 break;
+             case 'ReviewController':
+                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
+                 require './controllers/ReviewController.php';
+                 break;
+             case 'ElementController':
+                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
+                 require './controllers/ElementController.php';
+                 break;
+             case 'AskFAQController':
+                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
+                 require './controllers/AskFAQController.php';
+                 break;*/
         }
 
         break;

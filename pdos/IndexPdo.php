@@ -586,7 +586,7 @@ function getContentsDetail($contentsId){
 // 검색결과 상위 21개
 function getContentsByKeyword($keyword){
     $pdo = pdoSqlConnect();
-    $query = "SELECT a.id,a.thumbnailImgUrl, a.nfOriginal
+    $query = "SELECT a.id,a.title,a.thumbnailImgUrl, a.nfOriginal
               FROM(
                     SELECT id,title ,actors ,thumbnailImgUrl, nfOriginal
                     FROM contents
@@ -732,7 +732,7 @@ function addSearchCnt($contentsId){
 // 인기 검색 컨텐츠 가져오기
 function getPopularSearchContents(){
     $pdo = pdoSqlConnect();
-    $query = "select id,thumbnailImgUrl,nfOriginal, videoUrl
+    $query = "select id,title,thumbnailImgUrl,nfOriginal, videoUrl
                 from contents where isDeleted='N'
                 order by searchCnt desc,year desc limit 30;";
 
